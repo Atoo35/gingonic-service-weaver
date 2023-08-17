@@ -12,7 +12,7 @@ func SetupRoutes() *gin.Engine {
 	tasksRoutes := router.Group("/api/tasks")
 	{
 		tasksRoutes.GET("/", h.GetTasks)
-		// tasksRoutes.POST("/", h.CreateTask)
+		tasksRoutes.POST("/", h.CreateTask)
 		tasksRoutes.GET("/:id", h.GetTask)
 		// tasksRoutes.PUT("/:id", h.UpdateTask)
 		// tasksRoutes.DELETE("/:id", h.DeleteTask)

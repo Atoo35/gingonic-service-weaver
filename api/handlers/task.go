@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/Atoo35/gingonic-service-weaver/mock"
 	"github.com/Atoo35/gingonic-service-weaver/models"
@@ -39,4 +40,19 @@ func (t *TaskHandler) GetTask(gctx *gin.Context) {
 	}
 }
 
-// func (t *TaskHandler) CreateTask(gctx *gin.Context)
+func (t *TaskHandler) CreateTask(gctx *gin.Context) {
+	body := models.Task{}
+
+	if err := gctx.ShouldBindJSON(&body); err != nil {
+		gctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"message": "Bad body",
+		})
+		return
+	}
+
+	body.ID = strconv.Itoa(len(mock.Tasks) + 1)
+	alltasks := append(mock.Tasks, body)
+	gctx.JSON(http.StatusCreated, gin.H{
+		"tasks": alltasks,
+	})
+}
