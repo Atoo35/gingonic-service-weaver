@@ -3,3 +3,6 @@ binary = "./gingonic-service-weaver"
 
 [single]
 listeners.taskapi = {address="localhost:8080"}
+
+[multi]
+listeners.taskapi = {address="localhost:8080"}
