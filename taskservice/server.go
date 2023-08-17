@@ -3,6 +3,7 @@ package taskservice
 import (
 	"context"
 
+	"github.com/Atoo35/gingonic-service-weaver/notificationservice"
 	"github.com/ServiceWeaver/weaver"
 	"github.com/gin-gonic/gin"
 )
@@ -11,17 +12,18 @@ type Server struct {
 	weaver.Implements[weaver.Main]
 	taskapi weaver.Listener
 	handler *gin.Engine
+
+	notificationService weaver.Ref[notificationservice.Service]
 }
 
 func (s *Server) Init(ctx context.Context) error {
-	h := &TaskHandler{}
 	router := gin.Default()
 
 	tasksRoutes := router.Group("/api/tasks")
 	{
-		tasksRoutes.GET("/", h.GetTasks)
+		tasksRoutes.GET("/", s.GetTasks)
 		// tasksRoutes.POST("/", h.CreateTask)
-		tasksRoutes.GET("/:id", h.GetTask)
+		tasksRoutes.GET("/:id", s.GetTask)
 		// tasksRoutes.PUT("/:id", h.UpdateTask)
 		// tasksRoutes.DELETE("/:id", h.DeleteTask)
 	}

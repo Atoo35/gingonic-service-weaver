@@ -1,6 +1,7 @@
 package taskservice
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Atoo35/gingonic-service-weaver/mock"
@@ -8,17 +9,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TaskHandler struct {
-}
+var ctx = context.Background()
 
-func (t *TaskHandler) GetTasks(gctx *gin.Context) {
+func (s *Server) GetTasks(gctx *gin.Context) {
 	tasks := mock.Tasks
+	if err := s.notificationService.Get().Send(ctx); err != nil {
+		s.Logger(ctx).Error("Failed to send notif")
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong while sending notification",
+		})
+	}
 	gctx.JSON(http.StatusAccepted, gin.H{
 		"tasks": tasks,
 	})
 }
 
-func (t *TaskHandler) GetTask(gctx *gin.Context) {
+func (s *Server) GetTask(gctx *gin.Context) {
 	id := gctx.Param("id")
 	task := new(models.Task)
 	for _, value := range mock.Tasks {
