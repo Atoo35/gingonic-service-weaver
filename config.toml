@@ -1,0 +1,5 @@
+[serviceweaver]
+binary = "./gingonic-service-weaver"
+
+[single]
+listeners.server = {address="localhost:8080"}
