@@ -22,10 +22,10 @@ func (s *Server) Init(ctx context.Context) error {
 	tasksRoutes := router.Group("/api/tasks")
 	{
 		tasksRoutes.GET("/", s.GetTasks)
-		// tasksRoutes.POST("/", h.CreateTask)
+		tasksRoutes.POST("/", s.CreateTask)
 		tasksRoutes.GET("/:id", s.GetTask)
-		// tasksRoutes.PUT("/:id", h.UpdateTask)
-		// tasksRoutes.DELETE("/:id", h.DeleteTask)
+		tasksRoutes.PUT("/:id", s.UpdateTask)
+		tasksRoutes.DELETE("/:id", s.DeleteTask)
 	}
 	s.handler = router
 	return nil
