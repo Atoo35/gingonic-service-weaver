@@ -14,8 +14,8 @@ func SetupRoutes() *gin.Engine {
 		tasksRoutes.GET("/", h.GetTasks)
 		tasksRoutes.POST("/", h.CreateTask)
 		tasksRoutes.GET("/:id", h.GetTask)
-		// tasksRoutes.PUT("/:id", h.UpdateTask)
-		// tasksRoutes.DELETE("/:id", h.DeleteTask)
+		tasksRoutes.PUT("/:id", h.UpdateTask)
+		tasksRoutes.DELETE("/:id", h.DeleteTask)
 	}
 
 	return router
