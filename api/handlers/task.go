@@ -66,9 +66,10 @@ func (t *TaskHandler) UpdateTask(gctx *gin.Context) {
 	task := getTaskByID(id)
 
 	if task.ID == "" {
-		gctx.JSON(http.StatusNotFound, gin.H{
+		gctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 			"message": "Task not found",
 		})
+		return
 	}
 
 	body := models.Task{}
@@ -99,9 +100,10 @@ func (t *TaskHandler) DeleteTask(gctx *gin.Context) {
 	task := getTaskByID(id)
 
 	if task.ID == "" {
-		gctx.JSON(http.StatusNotFound, gin.H{
+		gctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 			"message": "Task not found",
 		})
+		return
 	}
 
 	var result []models.Task
