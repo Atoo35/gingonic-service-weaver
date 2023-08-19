@@ -3,7 +3,6 @@ package taskservice
 import (
 	"context"
 	"net/http"
-	"strconv"
 
 	"github.com/Atoo35/gingonic-service-weaver/mock"
 	"github.com/Atoo35/gingonic-service-weaver/models"
@@ -13,7 +12,14 @@ import (
 var ctx = context.Background()
 
 func (s *Server) GetTasks(gctx *gin.Context) {
-	tasks := mock.Tasks
+	tasks, err := s.taskRepository.Get().GetTasks(ctx)
+	if err != nil {
+		s.Logger(ctx).Error("Failed to get tasks", err)
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong getting tasks",
+			"error":   err,
+		})
+	}
 	if err := s.notificationService.Get().Send(ctx); err != nil {
 		s.Logger(ctx).Error("Failed to send notif")
 		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
@@ -27,12 +33,13 @@ func (s *Server) GetTasks(gctx *gin.Context) {
 
 func (s *Server) GetTask(gctx *gin.Context) {
 	id := gctx.Param("id")
-	task := new(models.Task)
-	for _, value := range mock.Tasks {
-		if value.ID == id {
-			task = &value
-			break
-		}
+	task, err := s.taskRepository.Get().GetTaskByID(ctx, id)
+	if err != nil {
+		s.Logger(ctx).Error("Failed to get task by id: %s", id, err)
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong getting task",
+			"error":   err,
+		})
 	}
 
 	if task.ID != "" {
@@ -67,17 +74,30 @@ func (s *Server) CreateTask(gctx *gin.Context) {
 		return
 	}
 
-	body.ID = strconv.Itoa(len(mock.Tasks) + 1)
-	alltasks := append(mock.Tasks, body)
+	err := s.taskRepository.Get().CreateTask(ctx, body)
+	if err != nil {
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong while creating task",
+			"error":   err,
+		})
+		return
+	}
 	gctx.JSON(http.StatusCreated, gin.H{
-		"tasks": alltasks,
+		"task": body,
 	})
 }
 
 func (s *Server) UpdateTask(gctx *gin.Context) {
 	id := gctx.Param("id")
-	task := getTaskByID(id)
+	task, err := s.taskRepository.Get().GetTaskByID(ctx, id)
 
+	if err != nil {
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong",
+			"error":   err,
+		})
+		return
+	}
 	if task.ID == "" {
 		gctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
 			"message": "Task not found",
@@ -94,39 +114,31 @@ func (s *Server) UpdateTask(gctx *gin.Context) {
 		return
 	}
 
-	var result []models.Task
-	for _, t := range mock.Tasks {
-		if t.ID == id {
-			result = append(result, body)
-		} else {
-			result = append(result, t)
-		}
+	updatedTask, err := s.taskRepository.Get().UpdateTask(ctx, id, body)
+	if err != nil {
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong",
+			"error":   err,
+		})
+		return
 	}
 
 	gctx.JSON(http.StatusCreated, gin.H{
-		"tasks": result,
+		"tasks": updatedTask,
 	})
 }
 
 func (s *Server) DeleteTask(gctx *gin.Context) {
 	id := gctx.Param("id")
-	task := getTaskByID(id)
 
-	if task.ID == "" {
-		gctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-			"message": "Task not found",
+	if err := s.taskRepository.Get().DeleteTask(ctx, id); err != nil {
+		gctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": "Something went wrong while deleting the task",
+			"error":   err,
 		})
-		return
 	}
 
-	var result []models.Task
-	for _, t := range mock.Tasks {
-		if t.ID != id {
-			result = append(result, t)
-		}
-	}
-
-	gctx.JSON(http.StatusCreated, gin.H{
-		"tasks": result,
+	gctx.JSON(http.StatusOK, gin.H{
+		"message": "Successfully deleted.",
 	})
 }

@@ -6,3 +6,8 @@ listeners.taskapi = {address="localhost:8080"}
 
 [multi]
 listeners.taskapi = {address="localhost:8080"}
+
+["github.com/Atoo35/gingonic-service-weaver/repositories/TaskRepository"]
+User="root"
+Pass="root"
+ConnString="ws://localhost:8000/rpc"

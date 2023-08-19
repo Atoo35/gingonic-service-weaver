@@ -44,7 +44,7 @@ func init() {
 		ServerStubFn: func(impl any, addLoad func(uint64, float64)) codegen.Server {
 			return main_server_stub{impl: impl.(weaver.Main), addLoad: addLoad}
 		},
-		RefData: "⟦c598a594:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/Atoo35/gingonic-service-weaver/notificationservice/Service⟧\n⟦25a18d26:wEaVeRlIsTeNeRs:github.com/ServiceWeaver/weaver/Main→taskapi⟧\n",
+		RefData: "⟦e2d01c5f:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/Atoo35/gingonic-service-weaver/repositories/TaskRepository⟧\n⟦c598a594:wEaVeReDgE:github.com/ServiceWeaver/weaver/Main→github.com/Atoo35/gingonic-service-weaver/notificationservice/Service⟧\n⟦25a18d26:wEaVeRlIsTeNeRs:github.com/ServiceWeaver/weaver/Main→taskapi⟧\n",
 	})
 }
 

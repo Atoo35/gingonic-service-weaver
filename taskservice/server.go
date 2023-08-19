@@ -4,14 +4,16 @@ import (
 	"context"
 
 	"github.com/Atoo35/gingonic-service-weaver/notificationservice"
+	"github.com/Atoo35/gingonic-service-weaver/repositories"
 	"github.com/ServiceWeaver/weaver"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
 	weaver.Implements[weaver.Main]
-	taskapi weaver.Listener
-	handler *gin.Engine
+	taskapi        weaver.Listener
+	handler        *gin.Engine
+	taskRepository weaver.Ref[repositories.TaskRepository]
 
 	notificationService weaver.Ref[notificationservice.Service]
 }
